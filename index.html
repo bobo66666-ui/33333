@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D Hyperboloid Surface</title>
+    <style>
+        body { margin: 0; }
+        canvas { display: block; }
+    </style>
+</head>
+<body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    document.body.appendChild(renderer.domElement);
+
+    const geometry = new THREE.ParametricGeometry((u, v, target) => {
+        u *= Math.PI;
+        v *= Math.PI;
+        const x = 3 * Math.cos(u) * Math.sinh(v);
+        const y = 3 * Math.sin(u) * Math.sinh(v);
+        const z = 3 * Math.cosh(v);
+        target.set(x, y, z);
+    }, 50, 50);
+
+    const material = new THREE.MeshBasicMaterial({
+        color: 0x44aa88,
+        wireframe: false,
+        transparent: true,
+        opacity: 0.8,
+        side: THREE.DoubleSide
+    });
+
+    const hyperboloid = new THREE.Mesh(geometry, material);
+    scene.add(hyperboloid);
+
+    camera.position.z = 20;
+
+    function animate() {
+        requestAnimationFrame(animate);
+        hyperboloid.rotation.x += 0.01;
+        hyperboloid.rotation.y += 0.01;
+        renderer.render(scene, camera);
+    }
+
+    animate();
+
+    window.addEventListener('resize', () => {
+        const width = window.innerWidth;
+        const height = window.innerHeight;
+        renderer.setSize(width, height);
+        camera.aspect = width / height;
+        camera.updateProjectionMatrix();
+    });
+</script>
+</body>
+</html>
+
+
